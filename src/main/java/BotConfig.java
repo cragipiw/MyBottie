@@ -23,4 +23,9 @@ public class BotConfig {
     public Model getModel(){
         return new Model();
     }
+
+    @Bean
+    public InlineKeyBoardChooseCurrency getInlineKeyBoardChooseCurrency(){
+        return new InlineKeyBoardChooseCurrency();
+    }
 }

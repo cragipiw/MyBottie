@@ -3,26 +3,20 @@ import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
-import org.telegram.telegrambots.meta.api.objects.MemberStatus;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Bot extends TelegramLongPollingBot {
     AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(BotConfig.class);
     Model model = applicationContext.getBean(Model.class);
     ModelFiller modelFiller = applicationContext.getBean(ModelFiller.class);
     ConvertCurrency convertCurrency = applicationContext.getBean(ConvertCurrency.class);
+    InlineKeyBoardChooseCurrency inlineKeyboard = applicationContext.getBean(InlineKeyBoardChooseCurrency.class);
 
     private int botPhase = 0;
     private String currency;
@@ -44,16 +38,16 @@ public class Bot extends TelegramLongPollingBot {
 
         if (update.hasMessage()) {
             if (update.getMessage().hasText()) {
-                if (update.getMessage().getText().equals("Hello " + getBotUsername())&& botPhase==0) {
+                if (botPhase==0 && update.getMessage().getText().equals("Hello " + getBotUsername())) {
                     if (userFirstName != null && userLastName != null) {
                         try {
-                            execute(new SendMessage().setText("Подожи!").setChatId(update.getMessage().getChatId()));
+                            execute(new SendMessage().setText("Подождите пожалуйста, я занят другим пользователем.").setChatId(update.getMessage().getChatId()));
                         } catch (TelegramApiException e) {
                             e.printStackTrace();
                         }
                     }else {
                         try {
-                            execute(sendInlineKeyBoardChooseCurrency(update.getMessage().getChatId()));
+                            execute(inlineKeyboard.sendInlineKeyBoardChooseCurrency(update.getMessage().getChatId()));
                             userFirstName = update.getMessage().getFrom().getFirstName();
                             userLastName = update.getMessage().getFrom().getLastName();
                         } catch (TelegramApiException e) {
@@ -86,7 +80,7 @@ public class Bot extends TelegramLongPollingBot {
                     }
                 } else {
                     try {
-                        execute(new SendMessage().setText("Подожи!").setChatId(update.getMessage().getChatId()));
+                        execute(new SendMessage().setText("Подождите пожалуйста, я занят другим пользователем.").setChatId(update.getMessage().getChatId()));
                     } catch (TelegramApiException e) {
                         e.printStackTrace();
                     }
@@ -126,7 +120,7 @@ public class Bot extends TelegramLongPollingBot {
             }
         } else {
             try {
-                execute(new SendMessage().setText("Подожи!").setChatId(update.getMessage().getChatId()));
+                execute(new SendMessage().setText("Подождите пожалуйста, я занят другим пользователем.").setChatId(update.getCallbackQuery().getMessage().getChatId()));
             } catch (TelegramApiException e) {
                 e.printStackTrace();
             }
@@ -141,24 +135,5 @@ public class Bot extends TelegramLongPollingBot {
     @Override
     public String getBotToken() {
         return "1870676431:AAHPHTBQcfls_ISVmFzn4u2hWj1jICaFHpA";
-    }
-
-    public static SendMessage sendInlineKeyBoardChooseCurrency(long chatId) {
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-
-        List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
-        keyboardButtonsRow1.add(new InlineKeyboardButton().setText("USD").setCallbackData("USD"));
-        keyboardButtonsRow1.add(new InlineKeyboardButton().setText("EUR").setCallbackData("EUR"));
-        keyboardButtonsRow1.add(new InlineKeyboardButton().setText("JPY").setCallbackData("JPY"));
-
-        List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
-
-        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        rowList.add(keyboardButtonsRow1);
-        rowList.add(keyboardButtonsRow2);
-
-        inlineKeyboardMarkup.setKeyboard(rowList);
-
-        return new SendMessage().setChatId(chatId).setText("Выберите валюту").setReplyMarkup(inlineKeyboardMarkup);
     }
 }
