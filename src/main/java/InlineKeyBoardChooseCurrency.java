@@ -22,6 +22,6 @@ public class InlineKeyBoardChooseCurrency{
 
         inlineKeyboardMarkup.setKeyboard(rowList);
 
-        return new SendMessage().setChatId(chatId).setText("Выберите валюту").setReplyMarkup(inlineKeyboardMarkup);
+        return new SendMessage().setChatId(chatId).setText("Здавствуйте!\nВыберите валюту").setReplyMarkup(inlineKeyboardMarkup);
     }
 }
