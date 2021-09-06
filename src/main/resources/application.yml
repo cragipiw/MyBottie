@@ -1,0 +1,15 @@
+server:
+  port: 9345
+
+spring:
+  application:
+    name: bot
+  profiles:
+    active: default
+
+currency:
+  bot:
+    credentials:
+      telegramTokenName: CurrencyBot
+      telegramTokenValue: 1870676431:AAHPHTBQcfls_ISVmFzn4u2hWj1jICaFHpA
+
