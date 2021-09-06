@@ -1,0 +1,5 @@
+/.idea/sonarlint/*
+/.idea/MyBottie.iml
+/target/
+/.idea/checkstyle-idea.xml
+/.idea/encodings.xml
