@@ -40,4 +40,8 @@ public class TelegramMessageBuilder {
     return sendMessage;
   }
 
+  public static SendMessage buildCommonMessage(Long chatUserId,String text){
+      return new SendMessage(chatUserId.toString(), text);
+  }
+
 }

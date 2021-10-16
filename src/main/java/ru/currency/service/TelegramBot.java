@@ -22,13 +22,16 @@ public class TelegramBot extends TelegramLongPollingBot {
   private TelegramMessageHandler telegramMessageHandler;
   @Autowired
   private TelegramCallbackHandler telegramCallbackHandler;
+  @Autowired
+  private ModelManager modelManager;
+
 
   @Override
   public void onUpdateReceived(Update update) {
     if (update.hasMessage()) {
-      telegramMessageHandler.handle(update);
+      telegramMessageHandler.handle(update,modelManager);
     }else if(update.hasCallbackQuery()){
-      telegramCallbackHandler.handle(update);
+      telegramCallbackHandler.handle(update,modelManager);
     }
   }
 
